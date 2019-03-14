@@ -2,6 +2,7 @@ public class GE {
 
     public float[][] NaiveGaussianElimination(float[][] coeff, float[] sol){
 
+        //TODO: Complete written assignment
         //TODO: Determine if Naive Gaussian Includes handling 0's in first row.
         int size = coeff.length;
 
