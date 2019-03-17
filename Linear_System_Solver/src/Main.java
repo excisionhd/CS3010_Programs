@@ -12,15 +12,15 @@ public class Main {
 
         ge.NaiveGaussianElimination(coeff, sol);
 
-        printMatrix(coeff);
+        printMatrix(coeff, sol);
     }
 
-    public static void printMatrix(float[][] matrix){
+    public static void printMatrix(float[][] matrix, float[] sol){
         for (int i = 0; i < matrix.length; i++){
             for (int j = 0; j<matrix[i].length; j++){
                 System.out.printf(String.format("%.2f\t", matrix[i][j]));
             }
-            System.out.println();
+            System.out.println(sol[i]);
         }
     }
 }

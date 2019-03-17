@@ -20,6 +20,8 @@ public class GE {
                     }
                 }
 
+                sol[k] += scale * sol[i];
+
                 //TODO: Compute solution vector with separate scale
             }
         }
