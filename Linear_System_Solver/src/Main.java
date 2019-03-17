@@ -5,9 +5,6 @@ import java.util.HashSet;
 import java.util.Scanner;
 
 public class Main {
-    //Two classes:
-    //1. Naive Gaussian Elimination
-    //2. Scaled Partial Pivoting
 
     public static double[][] coeff;
     public static double[] sol;
@@ -52,6 +49,7 @@ public class Main {
 
     }
 
+    //Import linear system from a file
     public static void importMatrix(String fileName){
         try{
             Scanner scan = new Scanner(new File(System.getProperty("user.dir")+ "/" + fileName));
@@ -81,6 +79,7 @@ public class Main {
 
 class GE{
 
+    //Print a matrix in a readable format.
     public static void PrintMatrix(double[][] matrix, double[] sol){
         for (int i = 0; i < matrix.length; i++){
             for (int j = 0; j<matrix[i].length; j++){
@@ -90,6 +89,7 @@ class GE{
         }
     }
 
+    //Print solution vector in readable format.
     public static void PrintAnswer(double[] ans){
         for(int i = 0; i<ans.length; i++){
             System.out.printf("X%d: %.4f\n", i+1, ans[i] + 0.0);
@@ -100,7 +100,7 @@ class GE{
 
         int size = coeff.length;
 
-        //Loop for each row
+        //Following psuedocode...
         for(int i = 0 ; i < size; i++){
             for (int k = i + 1; k < size; k++){
                 double scale = -(coeff[k][i])/(coeff[i][i]);
@@ -122,6 +122,7 @@ class GE{
         return BackSubstitution(coeff, sol);
     }
 
+    //Back substitute from bottom to top
     public static double[] BackSubstitution(double[][] coeff, double[] sol){
         double[] answer = new double[coeff.length];
         int size = coeff.length-1;
@@ -149,6 +150,7 @@ class GE{
         int size  = coeff.length;
         double[] R = new double[size];
 
+        //Compute R vector
         for(int i = 0; i<size; i++){
             R[i] = Math.abs(coeff[i][iter]) / S[i];
         }
@@ -156,6 +158,7 @@ class GE{
         int maxIndex = 0;
         double max = 0;
 
+        //Choose the max pivot from R that has not been chosen yet.
         for(int i = 0; i<R.length; i++){
             double num = R[i];
             if (num > max && unusedPivots.contains(i)){
@@ -164,11 +167,10 @@ class GE{
             }
         }
 
-        //System.out.println("R: " + Arrays.toString(R));
-
         return maxIndex;
     }
 
+    //Compute the S array for assisting with pivot calculation.
     public static double[] ComputeS(double[][] coeff){
         int size = coeff.length;
         double[] S = new double[size];
@@ -176,6 +178,7 @@ class GE{
         for(int i = 0; i<size; i++){
             double max = -1;
 
+            //Obtain the max (Absolute Value) of each row
             for(int j = 0; j<size; j++){
                 max = Math.max(max, Math.abs(coeff[i][j]));
             }
@@ -185,9 +188,12 @@ class GE{
         return S;
     }
 
+    //Scaled partial pivoting implemention.
     public static double[] GaussianEliminationSPP(double[][] coeff, double[] sol){
         int[] order = new int[coeff.length];
         int size = coeff.length;
+
+        //Create hashset for unused pivots.
         HashSet<Integer> unusedPivots = new HashSet<>();
 
         //Initial order = 0, 1, .. n-1.
@@ -198,15 +204,18 @@ class GE{
 
         double[] S = ComputeS(coeff);
 
-
         //Iterate size - 1 times...
         for(int i = 0; i<size -1; i++){
             int iter = size - i - 1;
             int pivot = PartialPivot(coeff, S, iter, unusedPivots);
+
+            //Swap the pivot with the current iteration in the I (order) array.
             swap(i, pivot, order);
 
+            //Remove the current pivot from hashset to avoid eliminating the row.
             unusedPivots.remove(pivot);
 
+            //Eliminate all non-pivot rows
             for(Integer row : unusedPivots){
                 double scale = -(coeff[row][i]) / coeff[pivot][i];
 
@@ -231,7 +240,6 @@ class GE{
         //Compute last element
         answer[answer.length - 1] = sol[last]/coeff[last][coeff[last].length - 1];
 
-        //[2, 1, 0]
         for(int i = order.length - 2; i >= 0; i--){
             double sum = 0;
             int currentRow = order[i];
@@ -241,7 +249,6 @@ class GE{
             }
 
             answer[i] = (sol[currentRow] - sum)/ coeff[currentRow][i];
-            //System.out.println(Arrays.toString(answer));
         }
 
         return answer;
