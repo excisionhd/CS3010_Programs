@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.HashSet;
+
 public class Main {
     //Two classes:
     //1. Naive Gaussian Elimination
@@ -8,9 +11,12 @@ public class Main {
     static float[] sol = { 10, 7, 15 };
 
     public static void main(String[] args) {
-        float[] ans = GE.NaiveGaussianElimination(coeff, sol);
-        GE.PrintMatrix(coeff, sol);
-        GE.PrintAnswer(ans);
+        //float[] ans = GE.NaiveGaussianElimination(coeff, sol);
+        //GE.PrintMatrix(coeff, sol);
+        //GE.PrintAnswer(ans);
+
+
+        GE.NaiveGaussianEliminationSPP(coeff, sol);
 
 
     }
@@ -79,21 +85,80 @@ class GE{
     }
     //TODO: Implement scaled partial pivoting method.
 
-    //Used for partial pivoting
-    public int getGreatestRow(float[][] coeff){
+    //Returns the index with the chosen pivot.
+    public static int PartialPivot(float[][] coeff, float[] sol, float[] S, int[] order, int iter){
 
-        int size = coeff.length;
-        int maxRow = 0;
-        float maxElement = 0;
+        int size  = coeff.length;
+        float[] R = new float[size];
 
-        for (int i = 0; i < size; i++ ){
-            if (coeff[i][0] > maxElement){
-                maxElement = coeff[i][0];
-                maxRow = i;
+        for(int i = 0; i<size; i++){
+            R[i] = Math.abs(coeff[i][iter]) / S[i];
+        }
+
+        HashSet<Integer> toCheck = new HashSet<>();
+        for(int i = iter; i< order.length;i++){
+            toCheck.add(order[i]);
+        }
+
+        int maxIndex = 0;
+        float max = 0;
+
+        for(int i = 0; i<R.length; i++){
+            float num = R[i];
+            if (num > max && toCheck.contains(i)){
+                max = num;
+                maxIndex = i;
             }
         }
 
-        return maxRow;
+        System.out.println(Arrays.toString(R));
+
+        return maxIndex;
+    }
+
+    public static float[] ComputeS(float[][] coeff, float[] sol){
+        int size = coeff.length;
+        float[] S = new float[size];
+
+        for(int i = 0; i<size; i++){
+            float max = -1;
+
+            for(int j = 0; j<size; j++){
+                max = Math.max(max, Math.abs(coeff[i][j]));
+            }
+            S[i] = max;
+
+        }
+
+        return S;
+    }
+
+    public static float[] NaiveGaussianEliminationSPP(float[][] coeff, float[] sol){
+        int[] order = new int[coeff.length];
+        int size = coeff.length;
+
+        //Initial order = 0, 1, .. n-1.
+        for(int i = 0; i <order.length; i++){
+            order[i] = i;
+        }
+
+        float[] S = ComputeS(coeff, sol);
+        //Iterate size - 1 times...
+        for(int i = 0; i<size - 1; i++){
+            int pivot = PartialPivot(coeff, sol, S,order, size - i - 1);
+            System.out.println(pivot);
+        }
+
+
+
+
+        return null;
+    }
+
+    public static void swap(int i, int j, int[] order){
+        int copy = order[i];
+        order[i] = j;
+        order[j] = copy;
     }
 }
 
