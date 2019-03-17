@@ -26,6 +26,8 @@ public class Main {
                 double[] ans = GE.GaussianEliminationSPP(coeff, sol);
 
                 GE.PrintMatrix(coeff, sol);
+
+                System.out.println("Gaussian Scaled Partial Pivoting Solution:");
                 GE.PrintAnswer(ans);
             }
             else{
@@ -38,6 +40,8 @@ public class Main {
                 double[] ans = GE.NaiveGaussianElimination(coeff, sol);
 
                 GE.PrintMatrix(coeff, sol);
+
+                System.out.println("Naive Gaussian Solution:");
                 GE.PrintAnswer(ans);
             }
         }
