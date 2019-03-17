@@ -1,65 +1,105 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Scanner;
 
 public class Main {
     //Two classes:
     //1. Naive Gaussian Elimination
     //2. Scaled Partial Pivoting
 
-    static float[][] coeff = { {3, 4, 3}, {1, 5, -1}, {6, 3, 7} };
-    static float[][] coeff2 = { {3, 4, 3}, {1, 5, -1}, {6, 3, 7} };
-    static float[] sol = { 10, 7, 15 };
-    static float[] sol2 = { 10, 7, 15 };
-
-    static double[][] coeff3 = { {0.0001, -5.0300, 5.8090, 7.8320}, {2.2660, 1.9950, 1.2120, 8.0080}, {8.8500, 5.6810, 4.5520, 1.3020}, {6.7750, -2.2530, 2.9080, 3.9700} };
-    static double[][] coeff4 = { {0.0001, -5.0300, 5.8090, 7.8320}, {2.2660, 1.9950, 1.2120, 8.0080}, {8.8500, 5.6810, 4.5520, 1.3020}, {6.7750, -2.2530, 2.9080, 3.9700} };
-
-
-
-
-
-
-
+    public static double[][] coeff;
+    public static double[] sol;
 
     public static void main(String[] args) {
-        float[] ans = GE.NaiveGaussianElimination(coeff, sol);
-        GE.PrintMatrix(coeff, sol);
-        GE.PrintAnswer(ans);
+
+        try{
+            String fileName;
+            if (args[0].equals("--spp")) {
+                fileName = args[1];
+                importMatrix(fileName);
+                System.out.println("Original Matrix:");
+                GE.PrintMatrix(coeff, sol);
+
+                System.out.println("Upper Triangular Form:");
+                double[] ans = GE.GaussianEliminationSPP(coeff, sol);
+
+                GE.PrintMatrix(coeff, sol);
+                GE.PrintAnswer(ans);
+            }
+            else{
+                fileName = args[0];
+                importMatrix(fileName);
+                System.out.println("Original Matrix:");
+                GE.PrintMatrix(coeff, sol);
+
+                System.out.println("Upper Triangular Form:");
+                double[] ans = GE.NaiveGaussianElimination(coeff, sol);
+
+                GE.PrintMatrix(coeff, sol);
+                GE.PrintAnswer(ans);
+            }
+        }
+        catch(Exception e){
+            System.out.println("Incorrect input, please provide proper parameters.");
+        }
 
 
-        float[] ans2 = GE.GaussianEliminationSPP(coeff2, sol2);
-        GE.PrintMatrix(coeff2, sol2);
-        GE.PrintAnswer(ans2);
+    }
 
+    public static void importMatrix(String fileName){
+        try{
+            Scanner scan = new Scanner(new File(System.getProperty("user.dir")+ "/" + fileName));
+            int size = scan.nextInt();
+
+
+            coeff = new double[size][size];
+            sol = new double[size];
+
+            for(int i = 0; i<size; i++){
+                for(int j = 0; j<coeff[i].length; j++){
+                    coeff[i][j] = scan.nextDouble();
+                }
+            }
+
+            for(int i = 0; i < size; i++){
+                sol[i] = scan.nextDouble();
+            }
+
+        }
+        catch(FileNotFoundException e){
+            System.out.println(e.getMessage());
+        }
 
     }
 }
 
 class GE{
 
-    public static void PrintMatrix(float[][] matrix, float[] sol){
+    public static void PrintMatrix(double[][] matrix, double[] sol){
         for (int i = 0; i < matrix.length; i++){
             for (int j = 0; j<matrix[i].length; j++){
-                System.out.printf(String.format("%.2f\t", matrix[i][j]));
+                System.out.printf(String.format("%.4f\t\t", matrix[i][j]));
             }
-            System.out.println(sol[i]);
+            System.out.printf(String.format("%.4f\t\t\n", sol[i]));
         }
     }
 
-    public static void PrintAnswer(float[] ans){
+    public static void PrintAnswer(double[] ans){
         for(int i = 0; i<ans.length; i++){
-            System.out.printf("X%d: %.2f\n", i+1, ans[i] + 0.0);
+            System.out.printf("X%d: %.4f\n", i+1, ans[i] + 0.0);
         }
     }
 
-    public static float[] NaiveGaussianElimination(float[][] coeff, float[] sol){
+    public static double[] NaiveGaussianElimination(double[][] coeff, double[] sol){
 
         int size = coeff.length;
 
         //Loop for each row
         for(int i = 0 ; i < size; i++){
             for (int k = i + 1; k < size; k++){
-                float scale = -(coeff[k][i])/(coeff[i][i]);
+                double scale = -(coeff[k][i])/(coeff[i][i]);
 
                 for(int j = i; j < size; j++){
                     if (i == j){
@@ -78,8 +118,8 @@ class GE{
         return BackSubstitution(coeff, sol);
     }
 
-    public static float[] BackSubstitution(float[][] coeff, float[] sol){
-        float[] answer = new float[coeff.length];
+    public static double[] BackSubstitution(double[][] coeff, double[] sol){
+        double[] answer = new double[coeff.length];
         int size = coeff.length-1;
 
         //Compute last element
@@ -87,7 +127,7 @@ class GE{
 
         for(int i = coeff.length - 1; i >= 0; i--)
         {
-            float sum = sol[i];
+            double sum = sol[i];
             for(int j = i + 1; j <= coeff.length - 1; j = j + i + 1)
             {
                 sum = sum - coeff[i][j] * answer[j];
@@ -100,20 +140,20 @@ class GE{
 
     //BEGIN SCALED PARTIAL PIVOTING METHOD
     //Returns the index with the chosen pivot.
-    public static int PartialPivot(float[][] coeff, float[] S, int iter, HashSet<Integer> unusedPivots){
+    public static int PartialPivot(double[][] coeff, double[] S, int iter, HashSet<Integer> unusedPivots){
 
         int size  = coeff.length;
-        float[] R = new float[size];
+        double[] R = new double[size];
 
         for(int i = 0; i<size; i++){
             R[i] = Math.abs(coeff[i][iter]) / S[i];
         }
 
         int maxIndex = 0;
-        float max = 0;
+        double max = 0;
 
         for(int i = 0; i<R.length; i++){
-            float num = R[i];
+            double num = R[i];
             if (num > max && unusedPivots.contains(i)){
                 max = num;
                 maxIndex = i;
@@ -125,12 +165,12 @@ class GE{
         return maxIndex;
     }
 
-    public static float[] ComputeS(float[][] coeff){
+    public static double[] ComputeS(double[][] coeff){
         int size = coeff.length;
-        float[] S = new float[size];
+        double[] S = new double[size];
 
         for(int i = 0; i<size; i++){
-            float max = -1;
+            double max = -1;
 
             for(int j = 0; j<size; j++){
                 max = Math.max(max, Math.abs(coeff[i][j]));
@@ -141,7 +181,7 @@ class GE{
         return S;
     }
 
-    public static float[] GaussianEliminationSPP(float[][] coeff, float[] sol){
+    public static double[] GaussianEliminationSPP(double[][] coeff, double[] sol){
         int[] order = new int[coeff.length];
         int size = coeff.length;
         HashSet<Integer> unusedPivots = new HashSet<>();
@@ -152,7 +192,7 @@ class GE{
             unusedPivots.add(i);
         }
 
-        float[] S = ComputeS(coeff);
+        double[] S = ComputeS(coeff);
 
 
         //Iterate size - 1 times...
@@ -164,7 +204,7 @@ class GE{
             unusedPivots.remove(pivot);
 
             for(Integer row : unusedPivots){
-                float scale = -(coeff[row][i]) / coeff[pivot][i];
+                double scale = -(coeff[row][i]) / coeff[pivot][i];
 
                 for(int col = i; col<coeff[row].length; col++){
                     coeff[row][col] = coeff[row][col] + coeff[pivot][col] * scale;
@@ -179,22 +219,25 @@ class GE{
         return BackSubstitutionSPP(coeff, sol, order);
     }
 
-    public static float[] BackSubstitutionSPP(float[][] coeff, float[] sol, int[] order){
-        float[] answer = new float[coeff.length];
+    public static double[] BackSubstitutionSPP(double[][] coeff, double[] sol, int[] order){
+        double[] answer = new double[coeff.length];
         int last = order[order.length - 1];
 
+
         //Compute last element
-        answer[last] = sol[last]/coeff[last][coeff[last].length - 1];
+        answer[answer.length - 1] = sol[last]/coeff[last][coeff[last].length - 1];
 
         //[2, 1, 0]
         for(int i = order.length - 2; i >= 0; i--){
-            float sum = 0;
+            double sum = 0;
             int currentRow = order[i];
+
             for(int j = i + 1; j < coeff[i].length; j++){
                 sum += coeff[currentRow][j] * answer[j];
             }
 
             answer[i] = (sol[currentRow] - sum)/ coeff[currentRow][i];
+            //System.out.println(Arrays.toString(answer));
         }
 
         return answer;
