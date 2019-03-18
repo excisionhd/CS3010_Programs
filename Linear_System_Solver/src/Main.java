@@ -1,5 +1,4 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -12,6 +11,7 @@ public class Main {
     public static void main(String[] args) {
         try{
             String fileName;
+            double[] ans;
             if (args[0].equals("--spp")) {
                 fileName = args[1];
                 importMatrix(fileName);
@@ -19,7 +19,7 @@ public class Main {
                 GE.PrintMatrix(coeff, sol);
 
                 System.out.println("Upper Triangular Form:");
-                double[] ans = GE.GaussianEliminationSPP(coeff, sol);
+                ans = GE.GaussianEliminationSPP(coeff, sol);
 
                 GE.PrintMatrix(coeff, sol);
 
@@ -33,13 +33,17 @@ public class Main {
                 GE.PrintMatrix(coeff, sol);
 
                 System.out.println("Upper Triangular Form:");
-                double[] ans = GE.NaiveGaussianElimination(coeff, sol);
+                ans = GE.NaiveGaussianElimination(coeff, sol);
 
                 GE.PrintMatrix(coeff, sol);
 
                 System.out.println("Naive Gaussian Solution:");
                 GE.PrintAnswer(ans);
             }
+
+            writeToFile(fileName, ans);
+
+
         }
         catch(Exception e){
             System.out.println("Incorrect input, please provide proper parameters.");
@@ -53,7 +57,6 @@ public class Main {
         try{
             Scanner scan = new Scanner(new File(System.getProperty("user.dir")+ "/" + fileName));
             int size = scan.nextInt();
-
 
             coeff = new double[size][size];
             sol = new double[size];
@@ -73,6 +76,21 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
+    }
+
+    //Export to a solution file.
+    public static void writeToFile(String fileName, double[] ans){
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(String.format("%s/%s.sol", System.getProperty("user.dir"), fileName.split("\\.")[0])));
+            for(int i = 0; i<ans.length; i++){
+                writer.write(String.format("X%d: %.4f\n", i+1, ans[i] + 0.0));
+            }
+
+            writer.close();
+        }
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
     }
 }
 
@@ -99,7 +117,6 @@ class GE{
 
         int size = coeff.length;
 
-        //Following psuedocode...
         for(int i = 0 ; i < size; i++){
             for (int k = i + 1; k < size; k++){
                 double scale = -(coeff[k][i])/(coeff[i][i]);
@@ -116,7 +133,6 @@ class GE{
                 sol[k] += scale * sol[i];
             }
         }
-
 
         return BackSubstitution(coeff, sol);
     }
@@ -230,7 +246,7 @@ class GE{
 
             }
 
-            GE.PrintMatrix(coeff,sol);
+            //GE.PrintMatrix(coeff,sol);
             //System.out.println();
 
         }
