@@ -10,7 +10,6 @@ public class Main {
     public static double[] sol;
 
     public static void main(String[] args) {
-
         try{
             String fileName;
             if (args[0].equals("--spp")) {
@@ -145,16 +144,17 @@ class GE{
 
     //BEGIN SCALED PARTIAL PIVOTING METHOD
     //Returns the index with the chosen pivot.
-    public static int PartialPivot(double[][] coeff, double[] S, int iter, HashSet<Integer> unusedPivots){
+    public static int PartialPivot(double[][] coeff, double[] S, int iter, HashSet<Integer> unusedPivots, int k){
 
         int size  = coeff.length;
         double[] R = new double[size];
 
         //Compute R vector
         for(int i = 0; i<size; i++){
-            R[i] = Math.abs(coeff[i][iter]) / S[i];
+            R[i] = Math.abs(coeff[i][k]) / S[i];
         }
 
+        System.out.println("R: " + Arrays.toString(R));
         int maxIndex = 0;
         double max = 0;
 
@@ -203,14 +203,17 @@ class GE{
         }
 
         double[] S = ComputeS(coeff);
+        System.out.println("S: " + Arrays.toString(S));
 
         //Iterate size - 1 times...
         for(int i = 0; i<size -1; i++){
             int iter = size - i - 1;
-            int pivot = PartialPivot(coeff, S, iter, unusedPivots);
+            int pivot = PartialPivot(coeff, S, iter, unusedPivots, i);
+            System.out.println("Pivot: " + pivot);
 
             //Swap the pivot with the current iteration in the I (order) array.
             swap(i, pivot, order);
+            System.out.println("Order: " + Arrays.toString(order));
 
             //Remove the current pivot from hashset to avoid eliminating the row.
             unusedPivots.remove(pivot);
@@ -226,6 +229,9 @@ class GE{
                 sol[row] = sol[row] + sol[pivot] * scale;
 
             }
+
+            GE.PrintMatrix(coeff,sol);
+            System.out.println();
 
         }
 
