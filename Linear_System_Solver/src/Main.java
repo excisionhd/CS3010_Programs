@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
 
@@ -139,21 +138,17 @@ class GE{
 
     //Back substitute from bottom to top
     public static double[] BackSubstitution(double[][] coeff, double[] sol){
+
         double[] answer = new double[coeff.length];
-        int size = coeff.length-1;
-
-        //Compute last element
-        answer[size] = sol[size]/coeff[size][size];
-
-        for(int i = coeff.length - 1; i >= 0; i--)
-        {
-            double sum = sol[i];
-            for(int j = i + 1; j <= coeff.length - 1; j = j + i + 1)
-            {
-                sum = sum - coeff[i][j] * answer[j];
+        
+        for (int i = coeff.length - 1; i >= 0; i--) {
+            double sum = 0.0;
+            for (int j = i + 1; j < coeff.length; j++) {
+                sum += coeff[i][j] * answer[j];
             }
-            answer[i] = sum/coeff[i][i];
+            answer[i] = (sol[i] - sum) / coeff[i][i];
         }
+
 
         return answer;
     }
