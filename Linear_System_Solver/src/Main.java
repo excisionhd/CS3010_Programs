@@ -154,7 +154,7 @@ class GE{
             R[i] = Math.abs(coeff[i][k]) / S[i];
         }
 
-        System.out.println("R: " + Arrays.toString(R));
+        //System.out.println("R: " + Arrays.toString(R));
         int maxIndex = 0;
         double max = 0;
 
@@ -203,17 +203,17 @@ class GE{
         }
 
         double[] S = ComputeS(coeff);
-        System.out.println("S: " + Arrays.toString(S));
+        //System.out.println("S: " + Arrays.toString(S));
 
         //Iterate size - 1 times...
         for(int i = 0; i<size -1; i++){
             int iter = size - i - 1;
             int pivot = PartialPivot(coeff, S, iter, unusedPivots, i);
-            System.out.println("Pivot: " + pivot);
+            //System.out.println("Pivot: " + pivot);
 
             //Swap the pivot with the current iteration in the I (order) array.
             swap(i, pivot, order);
-            System.out.println("Order: " + Arrays.toString(order));
+            //System.out.println("Order: " + Arrays.toString(order));
 
             //Remove the current pivot from hashset to avoid eliminating the row.
             unusedPivots.remove(pivot);
@@ -231,7 +231,7 @@ class GE{
             }
 
             GE.PrintMatrix(coeff,sol);
-            System.out.println();
+            //System.out.println();
 
         }
 
