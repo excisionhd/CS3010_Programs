@@ -1,3 +1,7 @@
+//Gaussian Elimination Linear System Solver
+//Date: 3/18/19
+//Author: Amir Sotoodeh
+
 import java.io.*;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -140,7 +144,7 @@ class GE{
     public static double[] BackSubstitution(double[][] coeff, double[] sol){
 
         double[] answer = new double[coeff.length];
-        
+
         for (int i = coeff.length - 1; i >= 0; i--) {
             double sum = 0.0;
             for (int j = i + 1; j < coeff.length; j++) {
