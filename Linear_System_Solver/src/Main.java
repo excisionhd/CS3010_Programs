@@ -56,6 +56,7 @@ public class Main {
     }
 
     //Import linear system from a file
+    //INPUT: Takes in file name and stores respective matrix in coeff and sol.
     public static void importMatrix(String fileName){
         try{
             Scanner scan = new Scanner(new File(System.getProperty("user.dir")+ "/" + fileName));
