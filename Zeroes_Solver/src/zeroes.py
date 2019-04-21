@@ -5,11 +5,18 @@ class Polynomial():
     def __init__(self, degree, coeff):
         self.degree = degree
         self.coeff = coeff
+        self.derivative = [co * (len(coeff[:-1]) -n) for n, co in enumerate(coeff[:-1])]
 
     def evaluate(self, x):
         result = 0
         for i, num in enumerate(self.coeff):
             result += num * (x ** (self.degree - i))
+        return result
+
+    def evalDeriv(self, x):
+        result = 0
+        for i, num in enumerate(self.derivative):
+            result += num * (x ** (len(self.derivative) -1 - i))
         return result
 
 
@@ -23,5 +30,3 @@ def ImportPolynomial(path):
         coeff = [int(i) for i in file.readline().split(' ')]
 
     return Polynomial(degree, coeff)
-
-print(ImportPolynomial("sys1.pol").evaluate(2))
