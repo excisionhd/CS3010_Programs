@@ -9,13 +9,13 @@ class Polynomial():
         self.derivative = [co * (len(coeff[:-1]) -n) for n, co in enumerate(coeff[:-1])]
 
     def evaluate(self, x):
-        result = 0
+        result = 0.0
         for i, num in enumerate(self.coeff):
             result += num * (x ** (self.degree - i))
         return result
 
     def evalDeriv(self, x):
-        result = 0
+        result = 0.0
         for i, num in enumerate(self.derivative):
             result += num * (x ** (len(self.derivative) -1 - i))
         return result
@@ -33,25 +33,29 @@ def ImportPolynomial(path):
     return Polynomial(degree, coeff)
 
 def Bisection(polynomial, max_iter, p1, p2):
+    x1 = float(p1)
+    x2 = float(p2)
+
     fx1 = polynomial.evaluate(p1)
     fx2 = polynomial.evaluate(p2)
 
     if(fx1 * fx2 > 0):
-        return
-
-    x1 = p1
-    x2 = p2
+        print("Invalid points, must be opposite signs.")
+        return (x1, fx1)
 
     for i in range(max_iter):
-        mid = float((x1 + x2)/2)
+        mid = (x1 + x2)/2
         fmid = polynomial.evaluate(mid)
         if fmid == 0:
-            return mid
+            print("Converged after {} iterations...".format(i+1))
+            return (mid, fmid)
         if fx1 * fmid < 0:
             x2 = mid  
         else:
             x1 = mid
-    return
+
+    print("Failed to converge after {} iterations".format(max_iter))
+    return (mid, fmid)
 
 def Newton(polynomial, max_iter, p1):
     x1 = float(p1)
@@ -62,60 +66,83 @@ def Newton(polynomial, max_iter, p1):
 
         if (fd == 0):
             print("Minimum/maximum reached: ({} , {})".format(x1,fx1))
-            return x1
+            return (x1, fx1)
         d = fx1 / fd
         x1 = x1 - d
         fx1 = polynomial.evaluate(x1)
 
         if (d == 0):
             print("Converged after {} iterations...".format(i+1))
-            return x1
+            return (x1, fx1)
 
-    return
+    return (x1, fx1)
+
+def Swap(x1, x2, fx1, fx2):
+    hold = x1
+    x1 = x2
+    x2 = hold
+
+    holdf = fx1
+    fx1 = fx2
+    fx2 = holdf
 
 def Secant(polynomial, max_iter, p1, p2):
-    x1 = p1
-    x2 = p2
+    x1 = float(p1)
+    x2 = float(p2)
 
     fx1 = polynomial.evaluate(p1)
     fx2 = polynomial.evaluate(p2)
-    """
-    fa := call f(a)
-  fb := call f(b)
 
-  if |fa| > |fb| then
-    swap(a, b)
-    swap(fa, fb)
-  end if
+    if (abs(fx1) > abs(fx2)):
+        Swap(x1,x2,fx1,fx2)
+    
+    for i in range(max_iter):
+        if (abs(fx1) > abs(fx2)):
+            Swap(x1,x2,fx1,fx2)
 
-  for it <- 1 to maxIter
-    if |fa| > |fb| then
-      swap(a, b)
-      swap(fa, fb)
-    end if
+        d = (x2 - x1) / (fx2 - fx1)
+        x2 = x1
+        fx2 = fx1
+        d = d * fx1
 
-    d := (b - a) / (fb - fa)
-    b := a
-    fb := fa
-    d := d * fa
+        if (d == 0):
+            print("Converged after {} iterations".format(i+1))
+            return (x1, fx1)
 
-    if |d| < eps then
-      print "Algorithm has converged after #{it} iterations!"
-      return a
-    end if
+        x1 = x1 - d
+        fx1 = polynomial.evaluate(x1)
 
-    a := a - d
-    fa := call f(a)
-  end for
-
-    print "Maximum number of iterations reached!"
-    return a
-    """
-
+    print("No convergence after {} iterations".format(max_iter))
+    return (x1, fx1)
 
 
 def main():
-    poly = ImportPolynomial("sys1.pol")
-    print("X = {}".format(Newton(poly, 10000, -1)))
+    parser = argparse.ArgumentParser(description="Evaluate zeroes of polynomials imported via file.")
+    mutual_args = parser.add_mutually_exclusive_group()
+    mutual_args.add_argument("-newt", help="run newton method for zeroes", action="store_true")
+    mutual_args.add_argument("-sec", help="run secant method for zeroes", action="store_true")
+    parser.add_argument("-maxIter", help="specify max iterations", type=int, default=10000)
+    parser.add_argument("initP", help="specify initial point", type=float)
+    parser.add_argument("initP2", help="specify initial point 2", nargs='?', type=float)
+    parser.add_argument("polyFileName", help="specify the polynomial file")
+    args = parser.parse_args()
+
+    if (not args.newt and args.initP2 is None):
+        parser.error("Algorithm requires two points.")
+    poly = ImportPolynomial(args.polyFileName)
+
+    if (args.newt):
+        print("Newton")
+        print("({} , {})".format(*Newton(poly, args.maxIter, args.initP)))
+    elif (args.sec):
+        print("Secant")
+        print("({} , {})".format(*Secant(poly, args.maxIter, args.initP, args.initP2)))
+    else:
+        print("Bisection")
+        print("({} , {})".format(*Bisection(poly, args.maxIter, args.initP, args.initP2)))
+
+    
+
+
 
 main()
