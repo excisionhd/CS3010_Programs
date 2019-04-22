@@ -20,6 +20,14 @@ class Polynomial():
             result += num * (x ** (len(self.derivative) -1 - i))
         return result
 
+class Result():
+    def __init__(self, root, iterations, outcome):
+        self.root = root
+        self.iterations = iterations
+        self.outcome = outcome
+
+    def __str__(self):
+        return " ".join([str(self.root), str(self.iterations), str(self.outcome)])
 
 def ImportPolynomial(path):
     if not os.path.isfile(path):
@@ -40,22 +48,22 @@ def Bisection(polynomial, max_iter, p1, p2):
     fx2 = polynomial.evaluate(p2)
 
     if(fx1 * fx2 > 0):
-        print("Invalid points, must be opposite signs.")
-        return (x1, fx1)
+        print("Invalid points, no roots detected between.")
+        return Result((x1, fx1), 0, "Failed")
 
     for i in range(max_iter):
         mid = (x1 + x2)/2
         fmid = polynomial.evaluate(mid)
         if fmid == 0:
             print("Converged after {} iterations...".format(i+1))
-            return (mid, fmid)
+            return Result((mid, fmid), i+1, "Converged")
         if fx1 * fmid < 0:
             x2 = mid  
         else:
             x1 = mid
 
     print("Failed to converge after {} iterations".format(max_iter))
-    return (mid, fmid)
+    return Result((mid, fmid), max_iter, "Failed")
 
 def Newton(polynomial, max_iter, p1):
     x1 = float(p1)
@@ -66,16 +74,17 @@ def Newton(polynomial, max_iter, p1):
 
         if (fd == 0):
             print("Minimum/maximum reached: ({} , {})".format(x1,fx1))
-            return (x1, fx1)
+            return Result((x1, fx1), i, "Min/max_stopped")
         d = fx1 / fd
         x1 = x1 - d
         fx1 = polynomial.evaluate(x1)
 
         if (d == 0):
             print("Converged after {} iterations...".format(i+1))
-            return (x1, fx1)
+            return Result((x1, fx1), i+1, "Converged")
 
-    return (x1, fx1)
+    print("Failed to converge after {} iterations".format(max_iter))
+    return Result((x1, fx1), max_iter, "Failed")
 
 def Swap(x1, x2, fx1, fx2):
     hold = x1
@@ -107,13 +116,13 @@ def Secant(polynomial, max_iter, p1, p2):
 
         if (d == 0):
             print("Converged after {} iterations".format(i+1))
-            return (x1, fx1)
+            return Result((x1, fx1), i+1, "Converged")
 
         x1 = x1 - d
         fx1 = polynomial.evaluate(x1)
 
-    print("No convergence after {} iterations".format(max_iter))
-    return (x1, fx1)
+    print("Failed to convergence after {} iterations".format(max_iter))
+    return Result((x1, fx1), max_iter, "Failed")
 
 
 def main():
@@ -132,15 +141,20 @@ def main():
     poly = ImportPolynomial(args.polyFileName)
 
     if (args.newt):
+        res = Newton(poly, args.maxIter, args.initP)
         print("Newton")
-        print("({} , {})".format(*Newton(poly, args.maxIter, args.initP)))
+        print("({} , {})".format(*res.root))
     elif (args.sec):
+        res = Secant(poly, args.maxIter, args.initP, args.initP2)
         print("Secant")
-        print("({} , {})".format(*Secant(poly, args.maxIter, args.initP, args.initP2)))
+        print("({} , {})".format(*res.root))
     else:
+        res = Bisection(poly, args.maxIter, args.initP, args.initP2)
         print("Bisection")
-        print("({} , {})".format(*Bisection(poly, args.maxIter, args.initP, args.initP2)))
+        print("({} , {})".format(*res.root))
 
+    with open(args.polyFileName.split(".")[0] + ".sol", 'w') as file:
+        file.write(str(res))
     
 
 
