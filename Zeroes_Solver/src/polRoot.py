@@ -2,6 +2,15 @@ import sys
 import os
 import argparse
 
+"""
+Zeroes.py
+Purpose: Calculate the zeroes of a given polynomial (via input file) using
+1. Bisection
+2. Newton
+3. Secant
+4. Hybrid (Bisection + Newton)
+"""
+
 class Polynomial():
     def __init__(self, degree, coeff):
         self.degree = degree
