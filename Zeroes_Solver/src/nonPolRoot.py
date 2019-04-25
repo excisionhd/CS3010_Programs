@@ -13,7 +13,7 @@ def Bisection(max_iter, p1, p2):
 
     fx1 = func1(x1)
     fx2 = func1(x2)
-    print("f({}) = {}, g({}) = {}".format(x1, fx1, x2, fx2))
+    print("f({}) = {}, f({}) = {}".format(x1, fx1, x2, fx2))
 
     if(fx1 * fx2 > 0):
         print("Invalid points, no roots detected between.")

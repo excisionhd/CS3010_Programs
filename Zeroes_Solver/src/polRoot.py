@@ -125,10 +125,17 @@ def Secant(polynomial, max_iter, p1, p2):
 
     if (abs(fx1) > abs(fx2)):
         Swap(x1,x2,fx1,fx2)
+
+    print("X0 = {}, X1 = {}".format(x1, x2))
     
-    for i in range(max_iter):
+    for i in range(2, max_iter):
         if (abs(fx1) > abs(fx2)):
             Swap(x1,x2,fx1,fx2)
+
+        _x1 = x1
+        _x2 = x2
+        _fx1 = fx1
+        _fx2 = fx2
 
         d = (x2 - x1) / (fx2 - fx1)
         x2 = x1
@@ -136,11 +143,13 @@ def Secant(polynomial, max_iter, p1, p2):
         d = d * fx1
 
         if (d == 0):
-            print("Converged after {} iterations".format(i+1))
-            return Result((x1, fx1), i+1, "Converged")
-
+            print("Converged after {} iterations".format(i-1))
+            return Result((x1, fx1), i-1, "Converged")
+            
         x1 = x1 - d
         fx1 = polynomial.evaluate(x1)
+
+        print("X{} = X{} - ( (X{} - X{}) / (f(X{}) - f(X{}) ) * f(X{}) = {} - ( ({} - {}) / ({} - {}) ) * {} = {}".format(i, i-1, i-1 ,i-2, i-1, i-2, i-1, _x1, _x1, _x2, _fx2, _fx1,_fx2, x1))
 
     print("Failed to convergence after {} iterations".format(max_iter))
     return Result((x1, fx1), max_iter, "Failed")
