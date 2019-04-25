@@ -57,7 +57,7 @@ def Bisection(polynomial, max_iter, p1, p2):
     fx2 = polynomial.evaluate(x2)
     print("f({}) = {}, f({}) = {}".format(x1, fx1, x2, fx2))
 
-    if(fx1 * fx2 > 0):
+    if(fx1 * fx2 >= 0):
         print("Invalid points, no roots detected between.")
         return Result((x1, fx1), 0, "Failed")
 
