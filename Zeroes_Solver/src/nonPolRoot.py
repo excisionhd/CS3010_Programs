@@ -13,8 +13,7 @@ def Bisection(max_iter, p1, p2):
 
     fx1 = func1(x1)
     fx2 = func1(x2)
-
-    print("g({}) = {}, g({}) = {}".format(x1, fx1, x2, fx2))
+    print("f({}) = {}, g({}) = {}".format(x1, fx1, x2, fx2))
 
     if(fx1 * fx2 > 0):
         print("Invalid points, no roots detected between.")
@@ -28,10 +27,10 @@ def Bisection(max_iter, p1, p2):
             print("Converged after {} iterations...".format(i+1))
             return mid
         if fx1 * fmid < 0:
-            print("g(XMid) = g({}) = {}.  {} > 0 -> XB = {}".format(mid, fmid, fmid, mid))
+            print("f(XMid) = g({}) = {}.  {} > 0 -> XB = {}".format(mid, fmid, fmid, mid))
             x2 = mid  
         else:
-            print("g(XMid) = g({}) = {}.  {} < 0 -> XA = {}".format(mid, fmid, fmid, mid))
+            print("f(XMid) = g({}) = {}.  {} < 0 -> XA = {}".format(mid, fmid, fmid, mid))
             x1 = mid
 
     print("Failed to converge after {} iterations".format(max_iter))

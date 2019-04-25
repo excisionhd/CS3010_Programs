@@ -55,6 +55,7 @@ def Bisection(polynomial, max_iter, p1, p2):
 
     fx1 = polynomial.evaluate(x1)
     fx2 = polynomial.evaluate(x2)
+    print("f({}) = {}, f({}) = {}".format(x1, fx1, x2, fx2))
 
     if(fx1 * fx2 > 0):
         print("Invalid points, no roots detected between.")
@@ -63,13 +64,15 @@ def Bisection(polynomial, max_iter, p1, p2):
     for i in range(max_iter):
         mid = (x1 + x2)/2
         fmid = polynomial.evaluate(mid)
-        print("Mid: {}, FMid: {}".format(mid, fmid))
+        print("Iter {}: XA = {}, XB = {}, XMid: {}".format(i+1, x1, x2, mid))
         if fmid == 0:
             print("Converged after {} iterations...".format(i+1))
             return Result((mid, fmid), i+1, "Converged")
         if fx1 * fmid < 0:
+            print("f(XMid) = g({}) = {}.  {} > 0 -> XB = {}".format(mid, fmid, fmid, mid))
             x2 = mid  
         else:
+            print("f(XMid) = g({}) = {}.  {} < 0 -> XA = {}".format(mid, fmid, fmid, mid))
             x1 = mid
 
     print("Failed to converge after {} iterations".format(max_iter))
@@ -79,15 +82,23 @@ def Newton(polynomial, max_iter, p1):
     x1 = float(p1)
     fx1 = polynomial.evaluate(x1)
 
-    for i in range(max_iter):
+    print("X0 = {}, f(X0) = {}".format(x1, fx1))
+
+    for i in range(1, max_iter):
         fd = polynomial.evalDeriv(x1)
 
         if (fd == 0):
             print("Minimum/maximum reached: ({} , {})".format(x1,fx1))
             return Result((x1, fx1), i, "Min/max_stopped")
+        _fx1 = fx1
+        _x1 = x1
+        _fd = fd
+
         d = fx1 / fd
         x1 = x1 - d
         fx1 = polynomial.evaluate(x1)
+
+        print("X{} = X{} - f(X{})/f'(X{}) = {} - {}/{} = {}".format(i,i-1,i-1,i-1,_x1,_fx1,_fd, x1))
 
         if (d == 0):
             print("Converged after {} iterations...".format(i+1))
