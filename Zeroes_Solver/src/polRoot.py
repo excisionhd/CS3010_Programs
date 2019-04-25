@@ -53,8 +53,8 @@ def Bisection(polynomial, max_iter, p1, p2):
     x1 = float(p1)
     x2 = float(p2)
 
-    fx1 = polynomial.evaluate(p1)
-    fx2 = polynomial.evaluate(p2)
+    fx1 = polynomial.evaluate(x1)
+    fx2 = polynomial.evaluate(x2)
 
     if(fx1 * fx2 > 0):
         print("Invalid points, no roots detected between.")
@@ -63,6 +63,7 @@ def Bisection(polynomial, max_iter, p1, p2):
     for i in range(max_iter):
         mid = (x1 + x2)/2
         fmid = polynomial.evaluate(mid)
+        print("Mid: {}, FMid: {}".format(mid, fmid))
         if fmid == 0:
             print("Converged after {} iterations...".format(i+1))
             return Result((mid, fmid), i+1, "Converged")
@@ -108,8 +109,8 @@ def Secant(polynomial, max_iter, p1, p2):
     x1 = float(p1)
     x2 = float(p2)
 
-    fx1 = polynomial.evaluate(p1)
-    fx2 = polynomial.evaluate(p2)
+    fx1 = polynomial.evaluate(x1)
+    fx2 = polynomial.evaluate(x2)
 
     if (abs(fx1) > abs(fx2)):
         Swap(x1,x2,fx1,fx2)
