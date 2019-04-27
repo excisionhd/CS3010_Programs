@@ -1,5 +1,9 @@
 import math
 
+"""
+Purpose:
+Perform zeroes solving on custom non-polynomial functions.
+"""
 def func1(x):
     return (x ** 3) - (2 * math.sin(x))
 
