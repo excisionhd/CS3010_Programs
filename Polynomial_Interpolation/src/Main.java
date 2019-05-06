@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 class Point{
@@ -44,22 +45,25 @@ public class Main {
     }
     public static void main(String[] args) {
 
-        ArrayList<Point> pts = ReadData("sys1.pts");
+        ArrayList<Point> pts = ReadData("src/sys1.pts");
         float[] cs = new float[pts.size()];
         Coeff(pts, cs);
-        float result = EvalNewton(pts, cs, 1);
+        float result = EvalNewton(pts, cs, 2);
+        System.out.println(Arrays.toString(cs));
         System.out.println(result);
 
     }
 
     public static void Coeff(ArrayList<Point> points, float[] cs){
 
-        for(int i = 0; i < points.size(); i++){
+        int n = points.size() - 1;
+
+        for(int i = 0; i < n; i++){
             cs[i] = points.get(i).y;
         }
 
-        for(int j = 1; j <points.size(); j++){
-            for(int i = points.size(); i > j; i--){
+        for(int j = 1; j < n; j++){
+            for(int i = n; i >= j; i--){
                 cs[i] = (cs[i] - cs[i-1]) / (points.get(i).x - points.get(i - j).x);
             }
         }
