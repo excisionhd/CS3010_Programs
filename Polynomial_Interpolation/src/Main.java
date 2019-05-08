@@ -1,5 +1,7 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -19,6 +21,7 @@ class Point{
 public class Main {
 
     public static String currentDir = System.getProperty("user.dir");
+    public static String FILEPATH = currentDir + "/src/sys1.pts";
 
     public static ArrayList<Point> ReadData(String filePath){
         
@@ -59,31 +62,8 @@ public class Main {
             }
         }
 
-        System.out.println(Arrays.toString(cs));
         return cs;
     }
-
-/*    function Coeff(xs : vector(n+1), ys : vector(n+1), cs : vector(n+1))
-            for i <- 0 to n
-    cs[i] := ys[i]
-    end for
-
-            for j <- 1 to n
-    for i <- n down to j
-    cs[i] := (cs[i] - cs[i-1]) / (xs[i] - x[i-j])
-    end for
-    end for
-    end function
-
-    function EvalNewton(xs : vector(n+1), cs : vector(n+1), z : float)
-    result := cs[n]
-
-            for i <- (n-1) down to 0
-    result := result * (z - xs[i]) + cs[i]
-    end for
-
-            return result
-    end function*/
 
     public static double EvalNewton(ArrayList<Point> points, double[] cs, double z){
         int n = points.size();
@@ -105,11 +85,45 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ArrayList<Point> pts = ReadData(currentDir + "/src/sys1.pts");
+        try{
+            ArrayList<Point> pts = ReadData(FILEPATH);
+            System.out.printf("Successfully loaded file: %s\n",FILEPATH);
+            for(Point p: pts){
+                System.out.println(p.toString());
+            }
 
-        double result = Newton(pts,0);
+            Scanner kb = new Scanner(System.in);
+            double z;
 
-        System.out.println(result);
+            while(true){
+                System.out.println("Enter a number to evaluate:");
+
+                String response = kb.next();
+
+                if(response.equals("q")){
+                    break;
+                }
+
+                try{
+                    z = Double.parseDouble(response);
+                    double result = Newton(pts,z);
+                    System.out.println(result);
+                }
+                catch(NumberFormatException e){
+                    System.out.println("Please enter a number...");
+                }
+
+
+            }
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+
+
+
 
     }
 
