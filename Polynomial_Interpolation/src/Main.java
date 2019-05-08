@@ -10,27 +10,26 @@ import java.util.Scanner;
 public class Main {
 
     public static String currentDir = System.getProperty("user.dir");
-    public static String FILEPATH = currentDir + "/src/sys1.pts";
+    public static String FILEPATH = currentDir + "/1000-points.pts";
 
-    public static ArrayList<Point> ReadData(String filePath){
+    public static ArrayList<Point> ReadData(String filePath) throws FileNotFoundException{
         
         ArrayList<Point> points = new ArrayList<>();
 
-        try(Scanner inputStream = new Scanner(new File(filePath))){
-            String[] xs = inputStream.nextLine().split(" ");
-            String[] ys = inputStream.nextLine().split(" ");
+        Scanner inputStream = new Scanner(new File(filePath));
 
-            int min = Math.min(xs.length, xs.length);
+        String[] xs = inputStream.nextLine().split(" ");
+        String[] ys = inputStream.nextLine().split(" ");
 
-            for(int i = 0 ;i < min; i++){
-                double x = Float.parseFloat(xs[i]);
-                double y = Float.parseFloat(ys[i]);
-                points.add(new Point(x,y));
-            }
+        int min = Math.min(xs.length, xs.length);
+
+        for(int i = 0 ;i < min; i++){
+            double x = Float.parseFloat(xs[i]);
+            double y = Float.parseFloat(ys[i]);
+            points.add(new Point(x,y));
         }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
+
+
 
         return points;
 
@@ -46,7 +45,6 @@ public class Main {
             for(Point p: pts){
                 System.out.println(p.toString());
             }
-            NewtonInterpolation NI = new NewtonInterpolation(pts);
 
             Scanner kb = new Scanner(System.in);
             double z;
@@ -62,8 +60,20 @@ public class Main {
 
                 try{
                     z = Double.parseDouble(response);
+
+                    //Start timer
+                    long startTime = System.currentTimeMillis();
+
+                    //Begin computing
+                    NewtonInterpolation NI = new NewtonInterpolation(pts);
                     double result = NI.Evaluate(z);
-                    System.out.println(result);
+
+                    //Stop timer
+                    long stopTime = System.currentTimeMillis();
+                    long elapsedTime = stopTime - startTime;
+
+                    System.out.println(String.format("%d points took time: %d ms", NI.points.size(), elapsedTime));
+                    System.out.println(result + "\n");
                 }
                 catch(NumberFormatException e){
                     System.out.println("Please enter a number...");
@@ -73,8 +83,9 @@ public class Main {
             }
 
         }
-        catch(Exception e){
-            e.printStackTrace();
+        catch(FileNotFoundException e){
+            System.out.println("Could not find file: " + FILEPATH);
+            System.exit(0);
         }
 
 
