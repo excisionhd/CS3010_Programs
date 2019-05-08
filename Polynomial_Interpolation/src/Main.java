@@ -30,7 +30,7 @@ public class Main {
 
             int min = Math.min(xs.length, xs.length);
 
-            for(int i = 0 ;i < min - 1; i++){
+            for(int i = 0 ;i < min; i++){
                 double x = Float.parseFloat(xs[i]);
                 double y = Float.parseFloat(ys[i]);
                 points.add(new Point(x,y));
@@ -44,8 +44,9 @@ public class Main {
 
     }
 
-    public static void Coeff(ArrayList<Point> points, double[] cs){
+    public static double[] Coeff(ArrayList<Point> points){
 
+        double[] cs = new double[points.size()];
         int n = points.size();
 
         for(int i = 0; i < n; i++){
@@ -58,6 +59,8 @@ public class Main {
             }
         }
 
+        System.out.println(Arrays.toString(cs));
+        return cs;
     }
 
 /*    function Coeff(xs : vector(n+1), ys : vector(n+1), cs : vector(n+1))
@@ -87,20 +90,25 @@ public class Main {
 
         double result = cs[n-1];
 
-        for(int i = n - 1; i>0; i--){
+        for(int i = n - 2; i>=0; i--){
             result = result * (z - points.get(i).x) + cs[i];
         }
 
         return result;
     }
+
+    public static double Newton(ArrayList<Point> points, double z){
+
+        double[] cs = Coeff(points);
+        return EvalNewton(points, cs, z);
+    }
+
     public static void main(String[] args) {
 
         ArrayList<Point> pts = ReadData(currentDir + "/src/sys1.pts");
-        double[] cs = new double[pts.size()];
-        Coeff(pts, cs);
 
-        double result = EvalNewton(pts, cs, 10.162);
-        System.out.println(Arrays.toString(cs));
+        double result = Newton(pts,0);
+
         System.out.println(result);
 
     }
