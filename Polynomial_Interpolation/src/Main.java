@@ -53,7 +53,7 @@ public class Main {
         }
 
         for(int j = 1; j < n; j++){
-            for(int i = n; i >= j; i--){
+            for(int i = n-1; i > j-1; i--){
                 cs[i] = (cs[i] - cs[i-1]) / (points.get(i).x - points.get(i - j).x);
             }
         }
@@ -87,7 +87,7 @@ public class Main {
 
         double result = cs[n-1];
 
-        for(int i = n - 2; i>=0; i--){
+        for(int i = n - 1; i>0; i--){
             result = result * (z - points.get(i).x) + cs[i];
         }
 
