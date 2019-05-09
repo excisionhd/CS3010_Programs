@@ -10,7 +10,6 @@ import java.util.Scanner;
 public class Main {
 
     public static String currentDir = System.getProperty("user.dir");
-    public static String FILEPATH = currentDir + "/1000-points.pts";
 
     public static ArrayList<Point> ReadData(String filePath) throws FileNotFoundException{
         
@@ -38,6 +37,13 @@ public class Main {
 
 
     public static void main(String[] args) {
+
+        if(args.length == 0){
+            System.out.println("Please specify a file.");
+            System.exit(0);
+        }
+
+        String FILEPATH = currentDir + "/" + args[0];
 
         try{
             ArrayList<Point> pts = ReadData(FILEPATH);
