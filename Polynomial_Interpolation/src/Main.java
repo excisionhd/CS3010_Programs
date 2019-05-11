@@ -9,8 +9,10 @@ import java.util.Scanner;
 
 public class Main {
 
+    //Get current directory of Main
     public static String currentDir = System.getProperty("user.dir");
 
+    //Reads input data from a file and returns as an ArrayList of points.
     public static ArrayList<Point> ReadData(String filePath) throws FileNotFoundException{
         
         ArrayList<Point> points = new ArrayList<>();
