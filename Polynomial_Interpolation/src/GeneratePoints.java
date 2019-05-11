@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class GeneratePoints {
 
+    //Generates a random arraylist of points from range -100 to 100.
     public static ArrayList<Point> generatePoints(int n){
 
         Random r = new Random();
@@ -19,6 +20,7 @@ public class GeneratePoints {
 
     }
 
+    //Write points to a file in respective format.
     public static void writePointsToFile(String fileName, ArrayList<Point> points){
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
