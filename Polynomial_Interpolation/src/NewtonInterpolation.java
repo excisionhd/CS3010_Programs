@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class NewtonInterpolation {
 
@@ -26,6 +27,7 @@ public class NewtonInterpolation {
                 cs[i] = (cs[i] - cs[i-1]) / (points.get(i).x - points.get(i - j).x);
             }
         }
+
     }
 
     public double Evaluate(double z){
