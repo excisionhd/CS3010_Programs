@@ -3,4 +3,4 @@
 2. `java Main FILENAME`
 
 To Generate Random Points:  
-2. `java GeneratePoints`
+1. `java GeneratePoints`
